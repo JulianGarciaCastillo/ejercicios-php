@@ -1,2 +1,2 @@
 # ejercicios-php
-Ejercicios realizados en php y NetBeans
+Ejercicios realizados en php con NetBeans
