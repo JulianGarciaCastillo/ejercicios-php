@@ -1,0 +1,29 @@
+
+body{
+  background-color: black;
+  text-align: center;
+}
+input[type=number]{
+  height: 800px;
+  width: 1600px;
+  font-size: 700px;
+  color: #0dff00;
+  background-color: black;
+}
+div#mensajeIntentos{
+  color: blue;
+  font-size: 50px;
+}
+div#mensajeFinalno{
+  color: red;
+  font-size: 190px;
+  margin-top: 120px;
+  text-decoration: blink;
+}
+div#mensajeFinalsi {
+  color: green;
+  font-size: 190px;
+  margin-top: 120px;
+  text-decoration: blink;
+}
+
