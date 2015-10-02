@@ -4,26 +4,35 @@ body{
   text-align: center;
 }
 input[type=number]{
-  height: 800px;
-  width: 1600px;
-  font-size: 700px;
+  height: 50%;
+  width: 100%;
+  font-size: 3200%;
+  color: #0dff00;
+  background-color: black;
+  border: none;
+}
+input[type=submit]{
+  display: none;
+  height: 50%;
+  width: 100%;
+  font-size: 3200%;
   color: #0dff00;
   background-color: black;
 }
 div#mensajeIntentos{
-  color: blue;
-  font-size: 50px;
+  color: #0dff00;
+  font-size: 200%;
 }
 div#mensajeFinalno{
   color: red;
-  font-size: 190px;
-  margin-top: 120px;
+  font-size: 800%;
+  margin-top: 15%;
   text-decoration: blink;
 }
 div#mensajeFinalsi {
   color: green;
-  font-size: 190px;
-  margin-top: 120px;
+  font-size: 800%;
+  margin-top: 15%;
   text-decoration: blink;
 }
 
