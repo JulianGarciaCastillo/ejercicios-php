@@ -33,7 +33,7 @@ if ($passSecreta == $passUser) {?>
     echo '<form action="index.php" method="post">';
     echo '<input type="number" min=0 max=9999 name="passUser" autofocus placeholder=" - - - -">';
     echo '<input type="hidden" name="contador" value="', $contador, '">';
-    echo '<input type="submit" value="Continuar">';
+    echo '<input type="submit" value="ContinuarS">';
     echo '</form>';
 }
 ?>
