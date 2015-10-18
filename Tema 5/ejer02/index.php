@@ -29,28 +29,7 @@ if ($cantNumeros == 10) {
   
   
 // HALLAR MINIMO Y MAXIMOS
-  $maximo = -PHP_INT_MAX;
-  $minimo = PHP_INT_MAX;
-  
-  foreach ($arrayNum as $n ){
-    if ($n < $minimo){
-      $minimo = $n;
-    }
-    if ($n > $maximo){
-      $maximo = $n;
-    }
-  }
-  
-// MOSTRAR ARRAYS mio
-  foreach ($arrayNum as $n){
-    if ($n == $minimo){
-      echo "$n  MINIMO <br>";
-    }else if ($n == $maximo){
-      echo "$n  MAXIMO <br>";
-    }else{
-    echo "$n <br>";
-    }
-  }
+  arrayMinMax($arrayNum);
 
 }
 if ($cantNumeros < 10) {?>
@@ -61,7 +40,34 @@ if ($cantNumeros < 10) {?>
     <input type="submit" value="Continuar">
 </form>
 <?php
-}?>  
+}
+
+function arrayMinMax($array){
+  $maximo = -PHP_INT_MAX;
+  $minimo = PHP_INT_MAX;
+  
+  foreach ($array as $n ){
+    if ($n < $minimo){
+      $minimo = $n;
+    }
+    if ($n > $maximo){
+      $maximo = $n;
+    }
+  }
+  
+// MOSTRAR ARRAYS mio
+  foreach ($array as $n){
+    if ($n == $minimo){
+      echo "$n  MINIMO <br>";
+    }else if ($n == $maximo){
+      echo "$n  MAXIMO <br>";
+    }else{
+    echo "$n <br>";
+    }
+  }
+}
+
+?>  
   
   </body>
 </html>

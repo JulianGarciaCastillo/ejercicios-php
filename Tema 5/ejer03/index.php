@@ -24,18 +24,23 @@ if (!isset($_GET['numUser'])){
 }
   
 if ($cantNumeros == 15) {
-  $numeroText = $numeroText . " " . $numUser;
-  $numeroText = substr($numeroText, 2);                                       
-  $arrayNum = explode(" ", $numeroText);
+  arrayExplode($numeroText, $numUser, $arrayNum);
+  $arrayCamb = $arrayNum;
+
+//  $numeroText = $numeroText . " " . $numUser;
+//  $numeroText = substr($numeroText, 2);                                       
+//  $arrayNum = explode(" ", $numeroText);
+ 
   
   
   
 // Mover posiciones array un paso y la ultima posicion al primer indice.
   //Guardo el ultimo numero del array original en la primera posicion del otro.
-$arrayCamb[0] = $arrayNum[14];
-  for($x = 1; $x < count($arrayNum); $x++){
-  $arrayCamb[$x] = $arrayNum[$x-1];
-}
+//$arrayCamb[0] = $arrayNum[14];
+//  for($x = 1; $x < count($arrayNum); $x++){
+//  $arrayCamb[$x] = $arrayNum[$x-1];
+//}
+  rotaArrayIzq($arrayCamb, 2);
   
   
 ?>
@@ -77,7 +82,20 @@ if ($cantNumeros < 15) {?>
     <input type="submit" value="Continuar">
 </form>
 <?php
-}?>  
+}
+function rotaArrayIzq(&$array,$veces){
+  while ($y < $veces){
+    array_push($array,array_shift($array));
+    $y++;
+  }
+}
+function arrayExplode($numeroText, $numUsuario, &$arrayFinal){
+  $numeroText = $numeroText . " " . $numUsuario;
+  $numeroText = substr($numeroText, 2);                                       
+  $arrayFinal = explode(" ", $numeroText);
+  return $arrayFinal;
+}
+?>  
   
   </body>
 </html>
