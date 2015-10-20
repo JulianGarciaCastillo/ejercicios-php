@@ -19,8 +19,9 @@ los tres arrays dispuesto en tres columnas..</b>
     $cuadrado = new SplFixedArray(20);
     $cubo = new SplFixedArray(20);
     
-    //arrayRnd($numero,20, 0, 100);
-    arrayRndSinRepetir(0, 100, 20, $numero);
+    for ($x = 0; $x < 20; $x++){
+      $numero[$x] = rand(0, 100); 
+    }
     
     for ($x = 0; $x < 20; $x++){
       $cuadrado[$x] = pow($numero[$x],2); 
@@ -60,28 +61,11 @@ los tres arrays dispuesto en tres columnas..</b>
     
     echo "</tr>";  
   }
-
+  
   ?>
   
   
 </table>
-<?php
-function arrayRnd($array, $cantNumeros, $min, $max){
-  for ($x = 0; $x < $cantNumeros; $x++){
-      $array[$x] = rand($min, $max); 
-    }
-    return $array;
-}
-  function arrayRndSinRepetir($min, $max, $cantidad, &$arrayFinal) {
-    // Meto x numeros min a max en array.
-    $arrayNum = range($min, $max);
-    
-    // Mezcla el orden de los números dentro del array
-    shuffle($arrayNum);
-    // Corto el array por el numero indicado.
-    $arrayFinal = array_slice($arrayNum, 0, $cantidad);
-}
-?>
   
   </body>
 </html>

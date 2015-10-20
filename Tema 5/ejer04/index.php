@@ -26,8 +26,7 @@ if (!isset($_GET['numeroText'])){
   }
   
   //Convertir de array a String, para enviarlo
-//  $numeroText = implode(" ", $numero);
-  arrayImplode($numero, $numeroText);
+  $numeroText = implode(" ", $numero);
 ?>
 
 <br><br>Introduce numeros a resaltar: 
@@ -47,30 +46,16 @@ if (!isset($_GET['numeroText'])){
   $numero = explode(" ", $numeroText);
 
   //Buscar si aparece los numeros
-//  foreach ($numero as $n) {
-//      if ($n == $numero1) { 
-//        echo "<span style=\"color: green; font-weight: bold;\">$numero2</span> ";
-//      } else {
-//        echo  "$n ";
-//      }
-//    }
-  arrayPintaElemento($numero, $numero1, blue);
-  
-  
-}
-function arrayImplode($array, &$cadenaTexto){
-  $cadenaTexto = implode(" ", $array);
-  return $cadenaTexto;
-}
-function arrayPintaElemento($array, $elemento, $color){
-  foreach ($array as $n) {
-      if ($n == $elemento) { 
-        echo "<span style=\"color: $color; font-weight: bold;\">$elemento</span> ";
+  foreach ($numero as $n) {
+      if ($n == $numero1) { 
+        echo "<span style=\"color: green; font-weight: bold;\">$numero2</span> ";
       } else {
         echo  "$n ";
       }
     }
+ 
 }
+
 ?>
   
   </body>

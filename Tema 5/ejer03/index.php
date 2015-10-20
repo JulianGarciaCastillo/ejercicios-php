@@ -27,19 +27,6 @@ if ($cantNumeros == 15) {
   arrayExplode($numeroText, $numUser, $arrayNum);
   $arrayCamb = $arrayNum;
 
-//  $numeroText = $numeroText . " " . $numUser;
-//  $numeroText = substr($numeroText, 2);                                       
-//  $arrayNum = explode(" ", $numeroText);
- 
-  
-  
-  
-// Mover posiciones array un paso y la ultima posicion al primer indice.
-  //Guardo el ultimo numero del array original en la primera posicion del otro.
-//$arrayCamb[0] = $arrayNum[14];
-//  for($x = 1; $x < count($arrayNum); $x++){
-//  $arrayCamb[$x] = $arrayNum[$x-1];
-//}
   rotaArrayIzq($arrayCamb, 2);
   
   
