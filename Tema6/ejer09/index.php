@@ -40,7 +40,7 @@ if (!$_SESSION['logueado']){
     </tr>  
     <tr>
       <td>PASSWORD</td>
-      <td><input type="text" name="userpass"> </td>
+      <td><input type="password" name="userpass"> </td>
     </tr>
     <tr>
       <td><input type="submit" name="ok" value="Iniciar sesion">

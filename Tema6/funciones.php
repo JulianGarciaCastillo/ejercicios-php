@@ -496,9 +496,8 @@ function cookieRecibeArray($nombreCookie, &$arraySalida){
   $arraySalida = unserialize($arraySalida);
 }
 // COMPRIMIR ARRAY > STRING Y GUARDAR EN COOKIE
-function cookieArrayToCookie(&$array, $nombreCookie){
-  $array = serialize($array);
-  setcookie($nombreCookie, $array);
+function cookieArrayToCookie($array, $nombreCookie){
+  setcookie($nombreCookie, serialize($array), time() + 3*24*3600);
 }
 // DESCOMPRIMIR STRING > ARRAY
 function cookieStringToArray(&$string){
