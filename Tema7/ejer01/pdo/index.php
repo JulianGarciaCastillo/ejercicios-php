@@ -30,8 +30,14 @@
 
         // Transforma el array de datos recibidos en una frase: EJ: 2573063','Julian Garcia','c/ Avellanas','60578523
         pdoArrayAlta($datosTabla, $sentenciaAlta);
-        pdoConsulta_Alta($conexion, $nombreTabla, $sentenciaAlta);
-        echo " - Cliente <b>".$datosTabla[1]."</b> añadido con éxito."; 
+        
+        // Incluir comprobacion dni existente
+        if(pdoCompruebaDato($conexion, $nombreTabla, $campoClave, $datosTabla[0])){
+          echo " - Error. Cliente con codigo <b>".$datosTabla[0]."</b> ya existe.";  
+        }else{
+          pdoConsulta_Alta($conexion, $nombreTabla, $sentenciaAlta);
+          echo " - Cliente <b>".$datosTabla[1]."</b> añadido con éxito.";
+        }
       }
       // BAJA
       if (isset($_POST['baja'])){

@@ -602,7 +602,7 @@ function pdoTablaPag($conexion, $nombreTabla, $posPagElegida, $art_por_pagina, $
             for ($i = 0; $i < $numColumnas; $i++) { ?>
               <td> <?= $cliente->$nomColumnas[$i]; ?> </td> <?php
             }
-            botonModificar($cliente,$conexion, $nombreTabla,$nomColumnas, $numColumnas);
+            botonModificar($cliente,$nomColumnas, $numColumnas);
             botonBorrar($cliente,$nomColumnas);
             
             ?>
@@ -624,14 +624,14 @@ function pdoArrayCol($conexion, $nombreTabla, &$nomColumnas, &$numColumnas){
 }
 
 // Botones
-function botonModificar($cliente,$conexion, $nombreTabla,$nomColumnas, $numColumnas){
+function botonModificar($cliente,$nomColumnas, $numColumnas){
   ?>
   
   <form action="#.php" method="post"> <?php
     for ($i = 0; $i < $numColumnas; $i++){?>
-      <input type="hidden" name="<?=$nomColumnas[$i]?>" value="<?= $cliente->$nomColumnas[$i] ?>"> <?php
+      <input type="hidden" name="<?=$nomColumnas[$i]?>" value="<?= $cliente->$nomColumnas[$i]?>" required> <?php
     }?>
-      <td><button name="aModificar" value="aModificar" ">MODIFICAR</button></td>
+      <td><button name="aModificar" value="aModificar">MODIFICAR</button></td>
   </form> <?php 
 }
 function botonBorrar($cliente,$nomColumnas){
@@ -655,7 +655,7 @@ function botonAlta($numColumnas,$nomColumnas,$datosTabla){
     <form method="post" action="#">
       <tr><?php
         for ($i = 0; $i < $numColumnas; $i++){?>
-          <td><input type="text" name="<?=$nomColumnas[$i]?>"></td><?php
+          <td><input type="text" name="<?=$nomColumnas[$i]?>" required></td><?php
         }?>  
           <td><input type="submit" name="alta" value="ALTA"></td>            
       </tr>
@@ -674,7 +674,7 @@ function botonAlta($numColumnas,$nomColumnas,$datosTabla){
     <form method="post" action="#">
       <tr><?php // AQUI SE USAN DATOSTABLA, ES UN ARRAY QUE HA RECOGIDO LO CLICKADO POR EL USER DANDO EN MODIFICAR
         for ($i = 0; $i < $numColumnas; $i++){?>
-          <td><input type="text" name="<?=$nomColumnas[$i]?>" value="<?=$datosTabla[$i]?>"></td><?php
+        <td><input type="text" name="<?=$nomColumnas[$i]?>" value="<?=$datosTabla[$i]?>" required></td><?php
         }?> 
           <td><input type="submit" name="modificacion" value="CAMBIAR" onclick="return confirmaModificar()"></td>            
       </tr>
@@ -684,7 +684,7 @@ function botonAlta($numColumnas,$nomColumnas,$datosTabla){
 
 // Comprobacion elemento existente tabla, devuelve true o false.
 function pdoCompruebaDato($conexion, $nombreTabla, $nomCol, $datoUser){
-$consulta = $conexion->query("SELECT $nomCol FROM ".$nombreTabla." WHERE $nomCol = $datoUser");
+$consulta = $conexion->query("SELECT $nomCol FROM `".$nombreTabla."` WHERE `".$nomCol."` = '".$datoUser."'");
   if ($consulta->rowCount() == 1) {
     return true;
   } else {
@@ -721,7 +721,6 @@ function pdoConsulta_Alta($conexion, $nombreTabla, $sentenciaAlta){
   $consulta = $conexion->query("INSERT INTO `".$nombreTabla."` VALUES ('".$sentenciaAlta."');");
    
 }
-
 // CONSULTA MODIFICACION
 function pdoConsulta_Modificar($conexion, $nombreTabla, $sentenciaUpdate, $nomColumnas, $datosTabla){
   $consulta = $conexion->query("UPDATE `".$nombreTabla."` SET ".$sentenciaUpdate." WHERE `".$nomColumnas[0]."` = '".$datosTabla[0]."'; ");   
@@ -742,7 +741,7 @@ function pdoNumPaginas($conexion, $nombreTabla, $art_por_pagina, &$ultPagina){
   
 }
 
-// Control paginado
+// Control paginado: Añadir justo antes de pdoTablaPag
 function pdoPaginado($posPagElegida, &$posPag, $ultPagina){
   if ($posPagElegida == "Primera") {
         $posPag = 1;
