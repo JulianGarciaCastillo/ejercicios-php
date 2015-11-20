@@ -625,21 +625,29 @@ function pdoArrayCol($conexion, $nombreTabla, &$nomColumnas, &$numColumnas){
 
 // Botones
 function botonModificar($cliente,$conexion, $nombreTabla,$nomColumnas, $numColumnas){
- 
-  
   ?>
+  
   <form action="#.php" method="post"> <?php
     for ($i = 0; $i < $numColumnas; $i++){?>
       <input type="hidden" name="<?=$nomColumnas[$i]?>" value="<?= $cliente->$nomColumnas[$i] ?>"> <?php
     }?>
-      <td><button name="aModificar" value="aModificar">MODIFICAR</button></td>
+      <td><button name="aModificar" value="aModificar" ">MODIFICAR</button></td>
   </form> <?php 
 }
 function botonBorrar($cliente,$nomColumnas){
   ?>
+    <script>
+      function confirmaBorrar(){
+        if(confirm('¿Estas seguro de borrar el elemento?')){
+          return true;
+        } else{
+          return false;
+          }
+      }
+    </script>
   <form action="#.php" method="post">
          <input type="hidden" name="codigo" value="<?=$cliente->$nomColumnas[0];?>">
-         <td><button name="baja" value="baja">BAJA</button></td>
+         <td><button name="baja" value="baja" onclick=" return confirmaBorrar()">BAJA</button></td>
   </form> <?php 
 }
 function botonAlta($numColumnas,$nomColumnas,$datosTabla){
@@ -652,13 +660,23 @@ function botonAlta($numColumnas,$nomColumnas,$datosTabla){
           <td><input type="submit" name="alta" value="ALTA"></td>            
       </tr>
     </form> <?php
-  }else{ ?>
+  }else{?>  
+  <script>
+      function confirmaModificar(){
+        if(confirm('¿Estas seguro de los cambios?')){
+          return true;
+        } else{
+          return false;
+          }
+      }
+  </script>
+    
     <form method="post" action="#">
       <tr><?php // AQUI SE USAN DATOSTABLA, ES UN ARRAY QUE HA RECOGIDO LO CLICKADO POR EL USER DANDO EN MODIFICAR
         for ($i = 0; $i < $numColumnas; $i++){?>
           <td><input type="text" name="<?=$nomColumnas[$i]?>" value="<?=$datosTabla[$i]?>"></td><?php
         }?> 
-          <td><input type="submit" name="modificacion" value="CAMBIAR"></td>            
+          <td><input type="submit" name="modificacion" value="CAMBIAR" onclick="return confirmaModificar()"></td>            
       </tr>
     </form> <?php  
   } 
@@ -700,8 +718,7 @@ function pdoInsertar(&$conexion, $insercion){
 
 // CONSULTA ALTA
 function pdoConsulta_Alta($conexion, $nombreTabla, $sentenciaAlta){
-  //$consulta = $conexion->query("INSERT INTO ".$nombreTabla." VALUES ('".$sentenciaAlta."');");
-  $consulta = $conexion->query("INSERT INTO `cliente` VALUES ('".$sentenciaAlta."');");
+  $consulta = $conexion->query("INSERT INTO `".$nombreTabla."` VALUES ('".$sentenciaAlta."');");
    
 }
 
