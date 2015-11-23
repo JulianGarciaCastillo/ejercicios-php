@@ -1,3 +1,4 @@
+<?php session_start() ?>
 <!DOCTYPE html>
 <html>
   <head>
@@ -12,16 +13,36 @@
     <?php
     include('../../funciones.php');
     
-    // CONEXION E INFORMACION ||||||||||||||||||||||||||||||||||||||||||||||||||
+    // CONEXION E INFORMACION --------------------------------------------------
       // Conexion
       pdoConexion("banco", "root", "root", $conexion);
       $nombreTabla = "cliente";
       $campoClave = "dni";
+      $datosTabla ="";                  // Solo se usa cuando se clicka modificar, pero se inicializa.
+      $datosTablaOrigSes =& $_SESSION['datosOriginal'];
       // Extraer nombres de columnas y cantidad.
       pdoArrayCol($conexion, $nombreTabla, $nomColumnas, $numColumnas);
-    // FIN CONEXION ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+    // FIN CONEXION ------------------------------------------------------------
+    
+    // PAGINADO Y ORDEN ARTICUTLOS ---------------------------------------------
+      // Articulos por pagina y paginas totales
+      $art_por_pagina = 3;
+      pdoNumPaginas($conexion, $nombreTabla, $art_por_pagina, $ultPagina);
+      
+      // Declarar pagina y alias
+      if(!isset($_SESSION['pagina'])) {
+        $_SESSION['pagina'] = 1;
+      }
+       $pagSes =& $_SESSION['pagina'];
+      
+      // Declarar ORDEN y alias
+      if(!isset($_SESSION['orden'])) {
+        $_SESSION['orden'] = 'dni';
+      }
+       $elementOrdenSes =& $_SESSION['orden'];
+    // FIN PAGINADO ------------------------------------------------------------
 
-    // RECIBIR ALTA,BAJA,MODIF |||||||||||||||||||||||||||||||||||||||||||||||||
+    // RECIBIR ALTA,BAJA,MODIF -------------------------------------------------
       // ALTA 
       if (isset($_POST['alta'])){
         for ($i = 0; $i < $numColumnas; $i++){
@@ -49,50 +70,47 @@
       // A MODIFICAR
       if (isset($_POST['aModificar'])){
         for ($i = 0; $i < $numColumnas; $i++){
-         $datosTabla[] = $_POST[$nomColumnas[$i]]; 
+         $datosTabla[] = $_POST[$nomColumnas[$i]];
+         $datosTablaOrigSes = $datosTabla;
+         
         }
-
+        
       }
+      
       // MODIFICACION
       if (isset($_POST['modificacion'])){
         for ($i = 0; $i < $numColumnas; $i++){
-          $datosTabla[] = $_POST[$nomColumnas[$i]]; 
+          $datosTabla []= $_POST[$nomColumnas[$i]]; 
         }
-        // Transformo array a string para pegar sentencia en update
-        pdoArrayModificacion($numColumnas, $nomColumnas, $datosTabla, $sentenciaUpdate);
-        pdoConsulta_Modificar($conexion, $nombreTabla, $sentenciaUpdate, $nomColumnas, $datosTabla);
+                
+        pdoConsulta_Modificar($conexion, $nombreTabla,$nomColumnas,$numColumnas, $datosTabla, $datosTablaOrigSes);
         echo " - Cliente <b>".$datosTabla[1]."</b> modificado con éxito."; 
+        
       }
-    // FIN RECIBIR DATOS |||||||||||||||||||||||||||||||||||||||||||||||||||||||
+      // ORDENAR
+      if (isset($_POST['orden'])){
+        $elementOrdenSes = $_POST['orden']; 
+      }
+      
     
-    // PAGINADO ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
-      //Hallar numero total de paginas
-      $art_por_pagina = 5;
-      pdoNumPaginas($conexion, $nombreTabla, $art_por_pagina, $ultPagina);
-
-      // Comprobar en que pagina estamos, sino hemos mandado nada, estamos en la primera. Sino, recibir del post, pag se puede meter en sesion.
-      if (!isset($_POST['pag'])){
-      $posPagElegida = "Primera";
-      }else{
-        $posPagElegida = $_POST['pag'];
-        $posPag = $_POST['posPag'];
-      }
-
+    // FIN RECIBIR DATOS -------------------------------------------------------
+    
+    // PAGINADO ----------------------------------------------------------------
+      // Recibo orden de a qué pagina quiero ir.
+      $paginaEnv = $_POST['pagEnv'];
+      
       // Control movimiento paginas
-      pdoPaginado($posPagElegida, $posPag, $ultPagina);
-    // FIN PAGINADO ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+      pdoPaginado($paginaEnv, $pagSes, $ultPagina);
+    // FIN PAGINADO ------------------------------------------------------------
 
-    // MOSTRAR TABLA Y PAGINAS |||||||||||||||||||||||||||||||||||||||||||||||||
-    // Mostrar listado limitado por numero de articulos que deseo mostrar
-      pdoTablaPag($conexion, $nombreTabla,$posPag, $art_por_pagina, $datosTabla);?>
-
-      <div>Pagina <?=$posPag ?> de <?= $ultPagina?></div>
-      <form action="#" method="post">
-        <button name="pag" value="Primera">Primera</button>   
-        <button name="pag" value="Anterior">Anterior</button>   
-        <button name="pag" value="Siguiente">Siguiente</button>   
-        <button name="pag" value="Ultima">Ultima</button>   
-        <input type="hidden" name="posPag" value="<?=$posPag?>"> 
-      </form>
+    // MOSTRAR TABLA Y PAGINAS -------------------------------------------------
+      // Mostrar listado limitado por numero de articulos que deseo mostrar
+      pdoTablaPag($conexion, $nombreTabla,$pagSes, $art_por_pagina, $datosTabla, $elementOrdenSes);
+     
+      // Mostrar botones paginado.
+      pdoBotonesPaginas($pagSes, $ultPagina); ?>
+    <br> <?php
+      // Mostrar desplegable order by
+      pdoOrdenar($nomColumnas, $numColumnas, $elementOrdenSes); ?>
     </body>
 </html>
