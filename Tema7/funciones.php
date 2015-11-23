@@ -569,7 +569,7 @@ function pdoTabla($conexion, $nombreTabla){
 }
 
 // Mostrar listado completo paginado
-function pdoTablaPag($conexion, $nombreTabla, $posPagElegida, $art_por_pagina, $datosTabla){
+function pdoTablaPag($conexion, $nombreTabla, $posPagSes, $art_por_pagina, $datosTabla, $elementOrdenSes){
 
 // Obtener nombre  y numero de columnas 
   pdoArrayCol($conexion, $nombreTabla, $nomColumnas, $numColumnas);
@@ -577,10 +577,10 @@ function pdoTablaPag($conexion, $nombreTabla, $posPagElegida, $art_por_pagina, $
 // Crear tabla personalizada con ese numColumnas y ese array columns[]
 
 //Calculos para rango articulos mostrados, segun pagina actual
-      $a = ($art_por_pagina * $posPagElegida) - $art_por_pagina;
+      $a = ($art_por_pagina * $posPagSes) - $art_por_pagina;
       $b = $art_por_pagina;
 // COLUMNAS TABLA 
-  $consulte = $conexion->query("SELECT * FROM ".$nombreTabla." LIMIT $a,$b");
+  $consulte = $conexion->query("SELECT * FROM ".$nombreTabla." ORDER BY $elementOrdenSes LIMIT $a,$b");
       ?>
   <table border="1" style="border-collapse: collapse; text-align: center;" cellpadding="5">
     <tr> 
@@ -672,8 +672,10 @@ function botonAlta($numColumnas,$nomColumnas,$datosTabla){
   </script>
     
     <form method="post" action="#">
-      <tr><?php // AQUI SE USAN DATOSTABLA, ES UN ARRAY QUE HA RECOGIDO LO CLICKADO POR EL USER DANDO EN MODIFICAR
-        for ($i = 0; $i < $numColumnas; $i++){?>
+      <tr>
+        <td><input type="text" name="<?=$nomColumnas[0]?>" value="<?=$datosTabla[0]?>" readonly style="background-color: lightgrey;"></td>
+        <?php
+        for ($i = 1; $i < $numColumnas; $i++){?>
         <td><input type="text" name="<?=$nomColumnas[$i]?>" value="<?=$datosTabla[$i]?>" required></td><?php
         }?> 
           <td><input type="submit" name="modificacion" value="CAMBIAR" onclick="return confirmaModificar()"></td>            
@@ -721,11 +723,21 @@ function pdoConsulta_Alta($conexion, $nombreTabla, $sentenciaAlta){
   $consulta = $conexion->query("INSERT INTO `".$nombreTabla."` VALUES ('".$sentenciaAlta."');");
    
 }
+
 // CONSULTA MODIFICACION
-function pdoConsulta_Modificar($conexion, $nombreTabla, $sentenciaUpdate, $nomColumnas, $datosTabla){
-  $consulta = $conexion->query("UPDATE `".$nombreTabla."` SET ".$sentenciaUpdate." WHERE `".$nomColumnas[0]."` = '".$datosTabla[0]."'; ");   
+function pdoConsulta_Modificar($conexion, $nombreTabla,$nomColumnas,$numColumnas, $datosTabla, $datosTablaOrigSes){
+  
+  for ($i = 1; $i < $numColumnas; $i++ ){
+    if ($datosTablaOrigSes[$i] != $datosTabla[$i]){
+      $consulta = $conexion->query("UPDATE `".$nombreTabla."` SET `".$nomColumnas[$i]."` = '".$datosTabla[$i]."' WHERE `".$nomColumnas[0]."` = '".$datosTabla[0]."'; ");  
+      echo "<br>";
+      print_r($consulta);
+      echo "<br>";
+    }
+  }
+  //$consulta = $conexion->query("UPDATE `".$nombreTabla."` SET ".$sentenciaUpdate." WHERE `".$nomColumnas[0]."` = '".$datosTabla[0]."'; ");   
 }
- 
+
  // CONSULTA BORRADO
 function pdoConsulta_Borrar($conexion, $nombreTabla, $campoClave, $codigo){
   $consulta = $conexion->query("DELETE FROM ".$nombreTabla."  WHERE `".$campoClave."` = '".$codigo."';");
@@ -742,20 +754,56 @@ function pdoNumPaginas($conexion, $nombreTabla, $art_por_pagina, &$ultPagina){
 }
 
 // Control paginado: Añadir justo antes de pdoTablaPag
-function pdoPaginado($posPagElegida, &$posPag, $ultPagina){
-  if ($posPagElegida == "Primera") {
-        $posPag = 1;
+function pdoPaginado($pagEnv, &$posPagS, $ultPagina){
+  if ($pagEnv == "Primera") {
+        $posPagS = 1;
       }
 
-      if (($posPagElegida == "Anterior") && ($posPag > 1)) {
-        $posPag--;
+      if (($pagEnv == "Anterior") && ($posPagS > 1)) {
+        $posPagS--;
       }
 
-      if (($posPagElegida == "Siguiente") && ($posPag < $ultPagina)) {
-        $posPag++;
+      if (($pagEnv == "Siguiente") && ($posPagS < $ultPagina)) {
+        $posPagS++;
       }
 
-      if ($posPagElegida == "Ultima") {
-        $posPag = $ultPagina;
+      if ($pagEnv == "Ultima") {
+        $posPagS = $ultPagina;
       }
+      if (($pagEnv > 1) && ($pagEnv <= $ultPagina)){
+        $posPagS = $pagEnv;
+      }
+}
+
+// Muestra botones paginas
+function pdoBotonesPaginas($pagSes,$ultPagina){?>
+  <div>Pagina <?=$pagSes ?> de <?= $ultPagina?></div>
+      <form action="#" method="post">
+        <button name="pagEnv" value="Primera">[1]</button>   
+        <button name="pagEnv" value="Anterior"><</button>
+        
+        <?php
+          for ($x = $pagSes+1; $x < $pagSes+4; $x++) { 
+            if ($x <= $ultPagina){?>
+            <button name="pagEnv" value="<?=$x?>"><?=$x?></button>  
+            <?php } } ?>
+       
+        <button name="pagEnv" value="Siguiente">></button>   
+        <button name="pagEnv" value="Ultima">[<?=$ultPagina?>]</button>   
+      </form> <?php
+}
+
+// Muestra desplegable para ordenar
+function pdoOrdenar($nomColumnas,$numColumnas, $elementOrdenSes){ ?>
+<form action="#" method="post">
+      Ordenar por: 
+      <select name="orden" onchange="form.submit()">
+        <?php 
+        for ($i = 0; $i < $numColumnas; $i++){?>
+          <option value="<?=$nomColumnas[$i]?>" <?php if ($elementOrdenSes == $nomColumnas[$i]){echo "selected";}?> ><?=$nomColumnas[$i]?></option>  
+        <?php }
+        ?>   
+      </select>
+    </form>
+<?php
 }
