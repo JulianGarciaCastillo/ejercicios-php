@@ -5,19 +5,26 @@
     <meta charset="UTF-8">
   </head>
   <body>
-    <p>1.Crea listado sobre la tabla Clientes que permita ALTA, BAJA y MODIFICACION, mediante el DNI.</p>
+    <p>4. Crea el programa GESTISIMAL (GESTIón SIMplifcada de Almacén) para llevar el control de los
+artículos de un almacén. De cada artículo se debe saber el código, la descripción, el precio de
+compra, el precio de venta y el stock (número de unidades). 
+La entrada y salida de mercancía supone respectivamente el incremento y decremento de stock de un determinado artículo. Hay que
+controlar que no se pueda sacar más mercancía de la que hay en el almacén. El programa debe tener,
+al menos, las siguientes funcionalidades: listado, alta, baja, modificación, entrada de mercancía y
+salida de mercancía.</p>
     <h2>
-    Base de datos PDO <u>banco</u><br>
-    Tabla <u>cliente</u><br>
+    Base de datos PDO <u>Almacen</u><br>
+    Tabla <u>articulos</u><br>
     </h2>
     <?php
-    include('../../funciones.php');
+    include('../funciones.php');
     
     // CONEXION E INFORMACION --------------------------------------------------
       // Conexion
-        pdoConexion("banco", "root", "root", $conexion);
-        $nombreTabla = "cliente";
-        $campoClave = "dni";
+        pdoConexion("almacen", "root", "root", $conexion);
+        $nombreTabla = "articulos";
+        $campoClave = "ID";
+        $numColumStock = 4;
         $datosTabla ="";                                                          // Campo solo usado en funcion cuando clicka modificar
       // Valores a mostrar de articulos por pagina.
         $opcion1 = 2;
@@ -26,6 +33,8 @@
       $datosTablaOrigSes =& $_SESSION['datosOriginal'];                         // Contiene datos originales para comparacion de UPDATE.
       // Extraer nombres de columnas y cantidad.
       pdoArrayCol($conexion, $nombreTabla, $nomColumnas, $numColumnas);
+      
+      
       // FIN CONEXION ----------------------------------------------------------
       
       // INICIACION COOKIES ----------------------------------------------------  
@@ -40,7 +49,6 @@
         $_SESSION['orden'] = $campoClave;
       }
       if(!isset($_SESSION['artpagina'])) {
-        
         $_SESSION['artpagina'] = $opcion1;
       }
        $elementOrdenSes =& $_SESSION['orden'];
@@ -94,13 +102,31 @@
         echo " - Cliente <b>".$datosTabla[1]."</b> modificado con éxito."; 
         
       }
+      // STOCK 
+      if (isset($_POST['stock'])){
+        $codigo = $_POST[$nomColumnas[0]];
+        $stockOri = $_POST[$nomColumnas[4]];
+        
+        if($_POST['entrada'] > 0){
+          $stockIN = $_POST['entrada'];
+          pdoConsulta_EntradaStock($conexion, $nombreTabla, $nomColumnas, $codigo,$stockOri, $stockIN);
+          echo " - Stock de elemento <b>".$codigo."</b> aumentado en ".$stockIN; 
+        }
+        if($_POST['salida'] > 0){
+          $stockOUT = $_POST['salida'];
+          
+          pdoConsulta_SalidaStock($conexion, $nombreTabla, $nomColumnas, $codigo,$stockOri, $stockOUT);
+          echo " - Stock de elemento con ID:<b>".$codigo."</b> disminuido en ".$stockOUT; 
+        }
+          
+      }
       // ORDENAR
       if (isset($_GET['orden'])){
         $elementOrdenSes = $_GET['orden']; 
       }
       // ARTICULOS POR PAGINA
       if (isset($_POST['artpagina'])){
-        $pagSes = 1;                                                            // Va a pagina 1 si se cambia el num_art_pagina
+         $pagSes = 1;                                                             //Esto hace que si se cambia el numero de articulos por pagina, redirige a la pag1
         $art_por_paginaSes = $_POST['artpagina']; 
       }
       
@@ -129,7 +155,7 @@
 
     // MOSTRAR TABLA Y PAGINAS -------------------------------------------------
       // Mostrar listado limitado por numero de articulos que deseo mostrar
-      pdoTablaPag($conexion, $nombreTabla,$pagSes, $art_por_paginaSes, $datosTabla, $elementOrdenSes);
+      pdoTablaPag_InOut($conexion, $nombreTabla,$pagSes, $art_por_paginaSes, $datosTabla, $elementOrdenSes,$numColumStock);
      
       // Mostrar botones paginado.
       pdoBotonesPaginas($pagSes, $ultPagina); ?>

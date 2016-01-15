@@ -51,11 +51,14 @@ if ( !isset($_COOKIE['catalogo_articulos']) ){
 }else{
  
   // Leer la cookie y convertir en array de nuevo
-  cookieRecibeArray('catalogo_articulos', $articulos);  
+  cookieRecibeArray('catalogo_articulos', $articulos);
 }
-
+// Recoge datos de elementos.
 $accion = $_POST['accion'];
 $codigo = $_POST['codigo'];
+$titulo = $_POST['titulo'];
+$precio = $_POST['precio'];
+$rutaImg = $_POST['rutaImg'];
 
   // DATOS  RECIBIDOS DEL POST
 
@@ -77,6 +80,12 @@ if ($accion == "baja"){
   unset($articulos[$codigo]);    
   cookieArrayToCookie($articulos,'catalogo_articulos');
 }
+  // ALTA: DAR DE ALTA UN LIBRO
+if ($accion == "alta"){
+  alta($articulos, $codigo, $titulo, $precio, $rutaImg);
+  cookieArrayToCookie($articulos,'catalogo_articulos');
+}
+
 
 // Mensaje que muestra tipo usuario que ha accedido desde index.
 $nombre = $_SESSION['tipoAcceso'];
@@ -85,32 +94,39 @@ echo "Conectado como > ". $nombre;
 //ZONA ADMIN
 // Si el usuario es admin:
 if ($nombre == "admin"){
-  function alta(&$array, $codigo, $nombre, $precio, $imagen){
-    $array[$codigo] = array ("titulo" => $nombre, "precio" => $precio, "imagen" => $imagen);  
-  }
-  function baja(&$array, $codigo){
-    unset($array[$codigo]);
-  }
-  function modificacion(&$array, $codigo, $nombre, $precio, $imagen){
-    $array[$codigo] = array ("titulo" => $nombre, "precio" => $precio, "imagen" => $imagen);  
-  }
-    //unset($articulos['elulta']);
-    //cookieArrayToCookie($articulos,'catalogo_articulos');
-
 
 // Panel admin ?>
 <div id="contenedorAdmin">
 <h1 align="center">PANEL ADMINISTRADOR</h1>
     <table border="1" style=" border-collapse: collapse; text-align: center; float: left; display: block;" >
       <tr> <th>COD</th> <th>TITULO</th> <th>PRECIO</th> <th>NOMBRE JPG</th> <th>ACCION</th></tr>
+      <?php if ($accion != "modificar"){ 
+        // Si no se ha pulsado en modificar, solo mostrar cuadros de texto en ALTA.?>
       <tr>
-        <td>cod</td>
-        <td>tit</td>
-        <td>precio</td>
-        <td>jpg</td>
-        <td>ALTA</td>
+      <form action="#" method="post">
+        <td><input type="text" name="codigo" placeholder="codigo"></td>
+        <td><input type="text" name="titulo" placeholder="titulo"></td>
+        <td><input type="number" name="precio" placeholder="precio"></td>
+        <td><input type="text" name="rutaImg" placeholder="ruta jpg"></td>
+        <td><button name="accion" value="alta">ALTA</td>
+      </form>
       </tr>
-        <?php
+      <?php } ?>
+      <?php if ($accion == "modificar"){ 
+        // Si se ha pulsado en modificar, mostrar informacion del elemento segun el $codigo enviado.?>
+       <tr>
+      <form action="#" method="post">
+        <td><input type="text" name="codigo" value="<?= $codigo;?>"</td>
+        <td><input type="text" name="titulo" value="<?= $articulos[$codigo][titulo] ;?>"></td>
+        <td><input type="number" name="precio" value="<?= $articulos[$codigo][precio] ;?>"></td>
+        <td><input type="text" name="rutaImg" value="<?= $articulos[$codigo][imagen] ;?>"></td>
+        <td><button name="accion" value="alta">ACEPTAR CAMBIOS</td>
+      </form>
+      </tr> 
+      <?php } ?>  
+        
+        
+        <?php //Mostrar tabla de articulos
         foreach ($articulos as $codigo => $elemento) { ?>
           <tr>
             <td> <?= $codigo; ?> </td>
@@ -133,11 +149,10 @@ if ($nombre == "admin"){
 
 <?php }
 
-
+// Si no esta logueado, retornar a pagina logueo.
   if ($nombre == ""){
     header('Location: index.php');
   }else{
-
 
 
 //  MUESTRO TABLA ARTICULOS
@@ -164,23 +179,14 @@ if ($nombre == "admin"){
         } ?>
     </table>
 
-
-
-
     <?php
     // CARRITO
 
 
-    // Si el carrito no se ha inicializdo, se inicializa. EN ESTO SE PUEDE HACER FUNCION A PARTIR DEL CATALOGO. TITULOS - CANTIDADES
+    // Si el carrito no se ha inicializdo, se inicializa
     if (!isset($_SESSION[carrito])){
-      $_SESSION[carrito] = array ("lasdvi" => 0, "elulta" => 0, "diamaz" => 0, "claluc" => 0);
+      $_SESSION[carrito] = array ();
     }
-
-
-    //unset($articulos['elulta']);
-    //cookieArrayToCookie($articulos,'catalogo_articulos');
-
-
 
     // TABLA CARRITO
     ?>

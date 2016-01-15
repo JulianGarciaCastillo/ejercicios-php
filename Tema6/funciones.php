@@ -1,4 +1,4 @@
-<?php
+  <?php
 /* Paquete de funciones para arrays uni-bidimensionales.
  * Autor: Julian Garcia Castillo.
  */
@@ -503,3 +503,18 @@ function cookieArrayToCookie($array, $nombreCookie){
 function cookieStringToArray(&$string){
   $string = unserialize($string);
 }
+
+// ARRAYS ASOCIATIVOS \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+//=============================================================================
+//=============================================================================
+
+//ZONA ADMINISTRADOR (EJEMPLO, ALTA() y COOKIEARRAYTOCOOKIE() )
+function alta(&$array, $codigo, $nombre, $precio, $imagen){
+    $array[$codigo] = array ("titulo" => $nombre, "precio" => $precio, "imagen" => $imagen);  
+  }
+  function baja(&$array, $codigo){
+    unset($array[$codigo]);
+  }
+  function modificacion(&$array, $codigo, $nombre, $precio, $imagen){
+    $array[$codigo] = array ("titulo" => $nombre, "precio" => $precio, "imagen" => $imagen);  
+  }

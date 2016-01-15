@@ -4,14 +4,14 @@
 
 <html>
   <head>
-    <meta charset="UTF-8">
+    <meta charset="UTF-8" author="Julian Garcia Castillo">
     <title></title>
   </head>
   <body>
-      <p><b>2. Realiza un programa que vaya pidiendo números hasta que se introduzca un numero negativo y
-nos diga cuantos números se han introducido, la media de los impares y el mayor de los pares. El
-número negativo sólo se utiliza para indicar el final de la introducción de datos pero no se incluye
-en el cómputo. Utiliza sesiones.
+      <p><b>2. Escribe un programa que pida números positivos uno detrás de otro. Se termina introduciendo un
+número negativo. A continuación, el programa debe mostrar la media, el máximo, el mínimo y el
+número de primos encontrados. Utiliza sesiones para propagar los datos necesarios; no se permite
+utilizar campos ocultos en formularios.
 
 <?php
 include('../funciones.php');

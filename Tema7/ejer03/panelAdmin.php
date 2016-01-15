@@ -4,20 +4,30 @@
   <head>
     <meta charset="UTF-8">
   </head>
+  <style>
+    body{
+      background-color: darkslategray;
+      color:white;
+    }
+    a{color: white;}
+  </style>
   <body>
-    <p>1.Crea listado sobre la tabla Clientes que permita ALTA, BAJA y MODIFICACION, mediante el DNI.</p>
+    <p>3. Modifica la tienda virtual realizada anteriormente de tal forma que todos los datos de los artículos
+se guarden en una base de datos.</p>
     <h2>
-    Base de datos PDO <u>banco</u><br>
-    Tabla <u>cliente</u><br>
+    Base de datos PDO <u>Libreria</u><br>
+    Tabla <u>libros</u><br>
     </h2>
+    <p align="center"><a href="index.php">MODO TIENDA</a></p>
     <?php
-    include('../../funciones.php');
+    include('../funciones.php');
     
     // CONEXION E INFORMACION --------------------------------------------------
       // Conexion
-        pdoConexion("banco", "root", "root", $conexion);
-        $nombreTabla = "cliente";
-        $campoClave = "dni";
+        pdoConexion("libreria", "root", "root", $conexion);
+        $nombreTabla = "libros";
+        $campoClave = "COD";
+        $numColumStock = 4;
         $datosTabla ="";                                                          // Campo solo usado en funcion cuando clicka modificar
       // Valores a mostrar de articulos por pagina.
         $opcion1 = 2;
@@ -40,7 +50,6 @@
         $_SESSION['orden'] = $campoClave;
       }
       if(!isset($_SESSION['artpagina'])) {
-        
         $_SESSION['artpagina'] = $opcion1;
       }
        $elementOrdenSes =& $_SESSION['orden'];
@@ -94,13 +103,31 @@
         echo " - Cliente <b>".$datosTabla[1]."</b> modificado con éxito."; 
         
       }
+      // STOCK 
+      if (isset($_POST['stock'])){
+        $codigo = $_POST[$nomColumnas[0]];
+        $stockOri = $_POST[$nomColumnas[4]];
+        
+        if($_POST['entrada'] > 0){
+          $stockIN = $_POST['entrada'];
+          pdoConsulta_EntradaStock($conexion, $nombreTabla, $nomColumnas, $codigo,$stockOri, $stockIN);
+          echo " - Stock de elemento <b>".$codigo."</b> aumentado en ".$stockIN; 
+        }
+        if($_POST['salida'] > 0){
+          $stockOUT = $_POST['salida'];
+          
+          pdoConsulta_SalidaStock($conexion, $nombreTabla, $nomColumnas, $codigo,$stockOri, $stockOUT);
+          echo " - Stock de elemento con ID:<b>".$codigo."</b> disminuido en ".$stockOUT; 
+        }
+          
+      }
       // ORDENAR
       if (isset($_GET['orden'])){
         $elementOrdenSes = $_GET['orden']; 
       }
       // ARTICULOS POR PAGINA
       if (isset($_POST['artpagina'])){
-        $pagSes = 1;                                                            // Va a pagina 1 si se cambia el num_art_pagina
+         $pagSes = 1;                                                             //Esto hace que si se cambia el numero de articulos por pagina, redirige a la pag1
         $art_por_paginaSes = $_POST['artpagina']; 
       }
       
@@ -129,7 +156,7 @@
 
     // MOSTRAR TABLA Y PAGINAS -------------------------------------------------
       // Mostrar listado limitado por numero de articulos que deseo mostrar
-      pdoTablaPag($conexion, $nombreTabla,$pagSes, $art_por_paginaSes, $datosTabla, $elementOrdenSes);
+      pdoTablaPag_InOut($conexion, $nombreTabla,$pagSes, $art_por_paginaSes, $datosTabla, $elementOrdenSes,$numColumStock);
      
       // Mostrar botones paginado.
       pdoBotonesPaginas($pagSes, $ultPagina); ?>

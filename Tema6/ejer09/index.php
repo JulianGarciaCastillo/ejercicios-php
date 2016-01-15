@@ -1,4 +1,3 @@
-
 <?php session_start() ?>
 <!DOCTYPE html>
 
@@ -43,7 +42,7 @@ if (!$_SESSION['logueado']){
       <td><input type="password" name="userpass"> </td>
     </tr>
     <tr>
-      <td><input type="submit" name="ok" value="Iniciar sesion">
+      <td><input type="submit" name="ok" value="Iniciar sesion" autofocus>
     </tr>
   </form>
 </table>
@@ -63,7 +62,7 @@ if (!$_SESSION['logueado']){
     echo "Datos incorrectos";
   }
   
-// Si ya ha accedido con 
+// Si ya ha accedido
 }else{
   echo "Bienvenido usuario, accediendo al ejercicio...";
   header('Refresh: 2; url=ejer04.php');
